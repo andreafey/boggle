@@ -5,10 +5,19 @@ object RunBoggle {
     def main(args: Array[String]) {
         val board = new Board()
         val dict = new LetterTree()
-        for (line <- Source.fromFile("/Users/andrea/workspace-scala/boggle/src/main/resources/dictionary.txt").getLines())
+        println("creating dictionary ...")
+        for (line <- Source.fromFile("/Users/rule146/Dropbox/boggle/src/main/resources/dictionary.txt").getLines())
             dict.addWord(line + '$')
-        println("aardvark: " + lookup("aardvark", dict))
-        println("boolean: " + lookup("boolean", dict))
+//        println("aardvark: " + lookup("aardvark", dict))
+//        println("boolean: " + lookup("boolean", dict))
+        println("finding words ...")
+        val words:List[String] = findWords(board, dict)
+        println("words found:")
+        for ( w:String <- words) 
+            println(w)
+        println()
+        println("board:")
+        println(board)
     }
 
     def wordFromGrid(b:Board, l:List[(Int, Int)]):String = {
@@ -25,15 +34,16 @@ object RunBoggle {
                         case Some(sub) => lookup(cs.mkString, sub)
                     }
     }
-    
+
+/*
     def isWordInGrid(b:Board, s:String):Boolean = {
       
     }
     def isValidWord(s:String, dict:LetterTree):Boolean = {
       
     }
-    
-    
+ */   
+
     def findWords(b:Board, dict:LetterTree):List[String] = {
       val letters = for {
 		x:Int <- Range(0,b.boardsize)
@@ -41,25 +51,39 @@ object RunBoggle {
 	  } yield (x,y) 
 	  val all = for {
 	    (x,y) <- letters
-	  } yield findWordsHelper(b, dict, List(), List((x,y)))
-	  all.flatten
+	  } yield (x,y) 
+      findWordsHelper(b, dict, List(), List(), all.toList)
     }
-    def findWords((Int,Int), b:Board, dict:LetterTree, found:List[String]):List[String] {
-      
-    }
-    def findWordsHelper(b:Board, dict:LetterTree, found:List[String], usedCoords:List[(Int,Int)]):List[String] = {
-      
+
+    def findWordsHelper(b:Board, dict:LetterTree, found:List[String], usedCoords:List[(Int,Int)], letters:List[(Int, Int)]):List[String] = letters match {
+        case Nil => found
+        case l :: ls => {
+            val sub = dict.getSubTree(b.grid(l._1)(l._2))
+            sub match {
+                case None => List()
+                case Some(subdict) => {
+                    val adj = adjacentCoords(b, l, usedCoords)
+                    subdict.getSubTree('$') match {
+                        case None => findWordsHelper(b, subdict, found, usedCoords ++ List(l), adj)
+                        case _ => findWordsHelper(b, subdict, wordFromGrid(b, usedCoords ++ List(l)) :: found, usedCoords ++ List(l), adj)
+                    }
+                        
+                }
+            }
+        }
     }
     
     def isInList(item:(Int,Int), l:List[(Int,Int)]):Boolean = l match {
     	case Nil => false
     	case x :: xs => if (item == x) true else isInList(item,xs)
     }
+
     def adjacentCoords(b:Board, coord:(Int,Int), usedCoords:List[(Int, Int)]):List[(Int, Int)] = {
-      for {
-        x:Int <- Range(coord._1-1, coord._1+1) if x >=0 && x < b.boardsize
-        y:Int <- Range(coord._2-1, coord._2+1) if y >=0 && y < b.boardsize
-      } yield (x, y) if isInList((x,y), usedCoords)
+      (for {
+        x <- (coord._1-1 until coord._1+1) if x >=0 && x < b.boardsize
+        y <- (coord._2-1 until coord._2+1) if y >=0 && y < b.boardsize
+        if (isInList((x,y), usedCoords))
+      } yield (x, y)).toList
     }
     
 }
