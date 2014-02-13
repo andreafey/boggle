@@ -2,6 +2,7 @@ package boggle
 import scala.util.Random
 
 object Board {
+  // TODO develop weighted sensible board
   def createBoard(boardsize: Int):List[List[Char]] = {
     val rand = new Random() 
 	  (for {
@@ -16,7 +17,7 @@ object Board {
 }
 
 class Board(val grid:List[List[Char]]) {
-	def boardsize = grid.size
+  def boardsize = grid.size
   override def toString():String = {
     grid.foldLeft("")((s:String,row:List[Char]) => s + printRow(row))
   }

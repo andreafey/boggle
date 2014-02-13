@@ -8,28 +8,24 @@ object RunBoggle {
         List('z', 'a', 'd', 'r'),
         List('i', 'b', 's', 'o'),
         List('w', 'g', 'w', 't')) 
-        
-//    	val test = Board.createBoard(4)
+	val evilgrid = List(
+        List('s', 'e', 'r', 's'),
+        List('p', 'a', 't', 'g'),
+        List('l', 'i', 'n', 'e'),
+        List('s', 'e', 'r', 's')) 
         val board = new Board(mygrid)
         val dict = new LetterTree()
         println("creating dictionary ...")
-        for (line <- Source.fromFile("/Users/rule146/Dropbox/boggle/src/main/resources/dictionary.txt").getLines())
+        for (line <- Source.fromFile("/Users/andrea/workspace-scala/boggle/src/main/resources/dictionary.txt").getLines())
             dict.addWord(line.toLowerCase() + '$')
-//        println("aardvark: " + lookup("aardvark", dict))
-//        println("boolean: " + lookup("boolean", dict))
-        println("finding words ...")
-        val words:List[String] = findWords(board, dict)
-        println("words found:")
-        for ( w:String <- words) 
-            println(w)
-        println()
-        println("board:")
-        println(board)
+      findAndPrint(board, dict)
+      val evilboard = new Board(evilgrid)
+//	  findAndPrint(evilboard, dict)
     }
 
-    def wordFromGrid(b:Board, l:List[(Int, Int)]):String = {
+    def wordFromGrid(b:Board, l:List[(Int, Int)]):String = 
        l.foldLeft("")((s:String, t:(Int, Int)) => s + b.grid(t._1)(t._2))
-    }
+    
 
     def lookup(s:String, lt:LetterTree):Boolean = s.toList match {
         case Nil => lt.getSubTree('$') match { 
@@ -59,40 +55,23 @@ object RunBoggle {
 	  val all = for {
 	    (x,y) <- letters
 	  } yield (x,y) 
-      val toFlatten = for {
-        l <- all.toList
-        val sub = dict.getSubTree(b.grid(l._1)(l._2))
-        val adj = adjacentCoords(b, l, List(l))
-      } yield sub match {
-          case None => List()
-          case Some(st) => findWordsHelper(b, st, List(), List(l), adj)
-      }
-      toFlatten.flatten
+	  findWordsHelper(b, dict, List(), List(), all.toList)
     }
 
     def findWordsHelper(b:Board, dict:LetterTree, found:List[String], usedCoords:List[(Int,Int)], letters:List[(Int, Int)]):List[String] = letters match {
         case Nil => found
         case l :: ls => {
-            println("prefix: " + wordFromGrid(b, usedCoords))
-            println("adjacent: " + wordFromGrid(b, letters))
             val sub = dict.getSubTree(b.grid(l._1)(l._2))
             (sub match {
-                case None => {
-                    println("+++++++++++++++++++++++ Stopping +++++++++++++++++++")
-                    List()
-                }
+                case None => List()
                 case Some(subdict) => {
                     val adj = adjacentCoords(b, l, usedCoords)
                     subdict.getSubTree('$') match {
                         case None => findWordsHelper(b, subdict, List(), usedCoords ++ List(l), adj)
-                        case _ => {
-                            println("************************* FOUND: " + wordFromGrid(b, usedCoords ++ List(l)))
-                            findWordsHelper(b, subdict, List(wordFromGrid(b, usedCoords ++ List(l))), usedCoords ++ List(l), adj)
-                        }
+                        case _ => findWordsHelper(b, subdict, List(wordFromGrid(b, usedCoords ++ List(l))), usedCoords ++ List(l), adj)
                     }                        
                 }
             }) ++ findWordsHelper(b, dict, found, usedCoords, ls)
-
         }
     }
     
@@ -107,6 +86,18 @@ object RunBoggle {
         y <- (coord._2-1 until coord._2+2) if y >=0 && y < b.boardsize
         if (! ((x,y) == coord) && ! isInList((x,y), usedCoords))
       } yield (x, y)).toList
+    }
+  
+  private def findAndPrint(board: boggle.Board, dict: boggle.LetterTree): Unit = {
+      println("finding words ...")
+      val words:List[String] = findWords(board, dict)
+      println("words found:")
+      for ( w:String <- words) 
+          println(w)
+      println(words.size+" words found")
+      println()
+      println("board:")
+      println(board)
     }
     
 }
