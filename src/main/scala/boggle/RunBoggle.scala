@@ -13,7 +13,7 @@ object RunBoggle {
         val board = new Board(mygrid)
         val dict = new LetterTree()
         println("creating dictionary ...")
-        for (line <- Source.fromFile("/Users/andrea/workspace-scala/boggle/src/main/resources/dictionary.txt").getLines())
+        for (line <- Source.fromFile("/Users/rule146/Dropbox/boggle/src/main/resources/dictionary.txt").getLines())
             dict.addWord(line.toLowerCase() + '$')
 //        println("aardvark: " + lookup("aardvark", dict))
 //        println("boolean: " + lookup("boolean", dict))
@@ -61,26 +61,38 @@ object RunBoggle {
 	  } yield (x,y) 
       val toFlatten = for {
         l <- all.toList
+        val sub = dict.getSubTree(b.grid(l._1)(l._2))
         val adj = adjacentCoords(b, l, List(l))
-      } yield findWordsHelper(b, dict, List(), List(l), adj)
+      } yield sub match {
+          case None => List()
+          case Some(st) => findWordsHelper(b, st, List(), List(l), adj)
+      }
       toFlatten.flatten
     }
 
     def findWordsHelper(b:Board, dict:LetterTree, found:List[String], usedCoords:List[(Int,Int)], letters:List[(Int, Int)]):List[String] = letters match {
         case Nil => found
         case l :: ls => {
+            println("prefix: " + wordFromGrid(b, usedCoords))
+            println("adjacent: " + wordFromGrid(b, letters))
             val sub = dict.getSubTree(b.grid(l._1)(l._2))
-            sub match {
-                case None => List()
+            (sub match {
+                case None => {
+                    println("+++++++++++++++++++++++ Stopping +++++++++++++++++++")
+                    List()
+                }
                 case Some(subdict) => {
                     val adj = adjacentCoords(b, l, usedCoords)
                     subdict.getSubTree('$') match {
-                        case None => findWordsHelper(b, subdict, found, usedCoords ++ List(l), adj)
-                        case _ => findWordsHelper(b, subdict, wordFromGrid(b, usedCoords ++ List(l)) :: found, usedCoords ++ List(l), adj)
-                    }
-                        
+                        case None => findWordsHelper(b, subdict, List(), usedCoords ++ List(l), adj)
+                        case _ => {
+                            println("************************* FOUND: " + wordFromGrid(b, usedCoords ++ List(l)))
+                            findWordsHelper(b, subdict, List(wordFromGrid(b, usedCoords ++ List(l))), usedCoords ++ List(l), adj)
+                        }
+                    }                        
                 }
-            }
+            }) ++ findWordsHelper(b, dict, found, usedCoords, ls)
+
         }
     }
     
@@ -93,7 +105,7 @@ object RunBoggle {
       (for {
         x <- (coord._1-1 until coord._1+2) if x >=0 && x < b.boardsize
         y <- (coord._2-1 until coord._2+2) if y >=0 && y < b.boardsize
-        if (! isInList((x,y), usedCoords))
+        if (! ((x,y) == coord) && ! isInList((x,y), usedCoords))
       } yield (x, y)).toList
     }
     
