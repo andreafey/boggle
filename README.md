@@ -25,5 +25,20 @@ Find the words
 ```scala
 RunBoggle.findAndPrintWords(board, dictionary)
 ```
+``` bash
+...
+torc
+torsade
+tor
+tow
+to
+two
+t
+168 words found
 
-
+board:
+feuc
+zadr
+ibso
+wgwt
+```
