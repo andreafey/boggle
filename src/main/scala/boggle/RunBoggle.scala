@@ -3,11 +3,18 @@ import scala.io.Source
 
 object RunBoggle {
     def main(args: Array[String]) {
-        val board = new Board()
+	val mygrid = List(
+        List('f', 'e', 'u', 'c'),
+        List('z', 'a', 'd', 'r'),
+        List('i', 'b', 's', 'o'),
+        List('w', 'g', 'w', 't')) 
+        
+//    	val test = Board.createBoard(4)
+        val board = new Board(mygrid)
         val dict = new LetterTree()
         println("creating dictionary ...")
-        for (line <- Source.fromFile("/Users/rule146/Dropbox/boggle/src/main/resources/dictionary.txt").getLines())
-            dict.addWord(line + '$')
+        for (line <- Source.fromFile("/Users/andrea/workspace-scala/boggle/src/main/resources/dictionary.txt").getLines())
+            dict.addWord(line.toLowerCase() + '$')
 //        println("aardvark: " + lookup("aardvark", dict))
 //        println("boolean: " + lookup("boolean", dict))
         println("finding words ...")
@@ -52,7 +59,11 @@ object RunBoggle {
 	  val all = for {
 	    (x,y) <- letters
 	  } yield (x,y) 
-      findWordsHelper(b, dict, List(), List(), all.toList)
+      val toFlatten = for {
+        l <- all.toList
+        val adj = adjacentCoords(b, l, List(l))
+      } yield findWordsHelper(b, dict, List(), List(l), adj)
+      toFlatten.flatten
     }
 
     def findWordsHelper(b:Board, dict:LetterTree, found:List[String], usedCoords:List[(Int,Int)], letters:List[(Int, Int)]):List[String] = letters match {
@@ -80,9 +91,9 @@ object RunBoggle {
 
     def adjacentCoords(b:Board, coord:(Int,Int), usedCoords:List[(Int, Int)]):List[(Int, Int)] = {
       (for {
-        x <- (coord._1-1 until coord._1+1) if x >=0 && x < b.boardsize
-        y <- (coord._2-1 until coord._2+1) if y >=0 && y < b.boardsize
-        if (isInList((x,y), usedCoords))
+        x <- (coord._1-1 until coord._1+2) if x >=0 && x < b.boardsize
+        y <- (coord._2-1 until coord._2+2) if y >=0 && y < b.boardsize
+        if (! isInList((x,y), usedCoords))
       } yield (x, y)).toList
     }
     
