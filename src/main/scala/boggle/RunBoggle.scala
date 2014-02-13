@@ -23,10 +23,16 @@ object RunBoggle {
 //	  findAndPrint(evilboard, dict)
     }
 
+    /**
+     * Convert a list of grid coordinates into a word
+     */
     def wordFromGrid(b:Board, l:List[(Int, Int)]):String = 
        l.foldLeft("")((s:String, t:(Int, Int)) => s + b.grid(t._1)(t._2))
     
 
+   /**
+    * Lookup a word in a LetterTree dictionary
+    */
     def lookup(s:String, lt:LetterTree):Boolean = s.toList match {
         case Nil => lt.getSubTree('$') match { 
                         case None => false
@@ -47,18 +53,16 @@ object RunBoggle {
     }
  */   
 
-    def findWords(b:Board, dict:LetterTree):List[String] = {
-      val letters = for {
-		x:Int <- Range(0,b.boardsize)
-		y:Int <- Range(0,b.boardsize)
-	  } yield (x,y) 
-	  val all = for {
-	    (x,y) <- letters
-	  } yield (x,y) 
-	  findWordsHelper(b, dict, List(), List(), all.toList)
-    }
+    /**
+     * Find all dictionary words in a Boggle board
+     */
+    def findWords(b:Board, dict:LetterTree):List[String] = 
+	  findWordsHelper(b, dict, List(), List(), b.coords)
 
-    def findWordsHelper(b:Board, dict:LetterTree, found:List[String], usedCoords:List[(Int,Int)], letters:List[(Int, Int)]):List[String] = letters match {
+    /**
+     * Recursion helper function to findWords
+     */
+    private def findWordsHelper(b:Board, dict:LetterTree, found:List[String], usedCoords:List[(Int,Int)], letters:List[(Int, Int)]):List[String] = letters match {
         case Nil => found
         case l :: ls => {
             val sub = dict.getSubTree(b.grid(l._1)(l._2))
@@ -75,11 +79,17 @@ object RunBoggle {
         }
     }
     
+    /**
+     * Checks whether a coordinate (tuple) is in a list of coordinates
+     */
     def isInList(item:(Int,Int), l:List[(Int,Int)]):Boolean = l match {
     	case Nil => false
     	case x :: xs => if (item == x) true else isInList(item,xs)
     }
 
+    /**
+     * Finds coordinates adjacent to a board square which have not already been used in a word's prefix
+     */
     def adjacentCoords(b:Board, coord:(Int,Int), usedCoords:List[(Int, Int)]):List[(Int, Int)] = {
       (for {
         x <- (coord._1-1 until coord._1+2) if x >=0 && x < b.boardsize
@@ -87,8 +97,10 @@ object RunBoggle {
         if (! ((x,y) == coord) && ! isInList((x,y), usedCoords))
       } yield (x, y)).toList
     }
-  
-  private def findAndPrint(board: boggle.Board, dict: boggle.LetterTree): Unit = {
+   /**
+    * Find all words in a dictionary and print them to the console
+    */
+   def findAndPrint(board: boggle.Board, dict: boggle.LetterTree): Unit = {
       println("finding words ...")
       val words:List[String] = findWords(board, dict)
       println("words found:")

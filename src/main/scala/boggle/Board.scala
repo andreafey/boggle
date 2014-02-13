@@ -18,6 +18,12 @@ object Board {
 
 class Board(val grid:List[List[Char]]) {
   def boardsize = grid.size
+  def coords = 
+    (for {
+		x:Int <- 0 until boardsize
+		y:Int <- 0 until boardsize
+	} yield (x,y)).toList 
+
   override def toString():String = {
     grid.foldLeft("")((s:String,row:List[Char]) => s + printRow(row))
   }
