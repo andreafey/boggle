@@ -1,6 +1,6 @@
 # Boggle
 
-This is a Boggle board solver written in Scala. It was co-authored by [Paul-Jean](https://github.com/paul-jean) and me during our first week at Hacker School. 
+This is a Boggle board solver written in Scala. It was co-authored by [Paul-Jean](https://github.com/paul-jean) and me during our first week at Hacker School. It can find 1765 words in an evil 4x4 grid!
 
 ## Notes
 
@@ -9,31 +9,26 @@ We did not implement our own prefix tree (boggle.LetterTree), but the rest of th
 ## Instructions
 
 ```bash
-boggle $sbt
-[info] Loading project definition from /Users/andrea/workspace-scala/boggle/project
-[info] Set current project to boggle (in build file:/Users/andrea/workspace-scala/boggle/)
-> compile
-[info] Compiling 1 Scala source to /Users/andrea/workspace-scala/boggle/target/scala-2.10/classes...
-[success] Total time: 6 s, completed Feb 13, 2014 4:47:15 PM
-> run
+boggle [master *%] $ sbt run
+...
+[info] Compiling 3 Scala sources to /Users/andrea/workspace-scala/boggle/target/scala-2.10/classes...
 [info] Running boggle.RunBoggle
 creating dictionary ...
 finding words ...
-words found:
-feud
-feu
-...
-torsade
-tor
-tow
-to
-two
-t
-168 words found
+205 words found
 
 board:
 feuc
 zadr
 ibso
 wgwt
+
+finding words ...
+1765 words found
+
+board:
+sers
+patg
+line
+sers
 ```

@@ -16,11 +16,11 @@ object RunBoggle {
         val board = new Board(mygrid)
         val dict = new LetterTree()
         println("creating dictionary ...")
-        for (line <- Source.fromFile("/Users/andrea/workspace-scala/boggle/src/main/resources/dictionary.txt").getLines())
+        for (line <- Source.fromFile("src/main/resources/dict2.txt").getLines())
             dict.addWord(line.toLowerCase() + '$')
       findAndPrint(board, dict)
       val evilboard = new Board(evilgrid)
-//	  findAndPrint(evilboard, dict)
+	  findAndPrint(evilboard, dict)
     }
 
     /**
@@ -103,9 +103,9 @@ object RunBoggle {
    def findAndPrint(board: boggle.Board, dict: boggle.LetterTree): Unit = {
       println("finding words ...")
       val words:List[String] = findWords(board, dict)
-      println("words found:")
-      for ( w:String <- words) 
-          println(w)
+//      println("words found:")
+//      for ( w:String <- words) 
+//          println(w)
       println(words.size+" words found")
       println()
       println("board:")
