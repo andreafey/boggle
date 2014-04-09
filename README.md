@@ -4,7 +4,7 @@ This is a Boggle board solver written in Scala. It was co-authored by [Paul-Jean
 
 ## Notes
 
-We did not implement our own prefix tree (boggle.LetterTree), but the rest of the code is ours.
+The specific boards to search are hard coded into `boggle.RunBoggle`, but you could write your own runner. Also, we did not implement our own prefix tree (boggle.LetterTree), but the rest of the code is ours.
 
 ## Instructions
 
