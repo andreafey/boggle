@@ -1,6 +1,10 @@
 # Boggle
 
-Solver for Boggle boards written in Scala
+This is a Boggle board solver written in Scala. It was co-authored by [Paul-Jean](https://github.com/paul-jean) and me during our first week at Hacker School. 
+
+## Notes
+
+We did not implement our own prefix tree (), but the rest of the code is ours.
 
 ## Instructions
 
