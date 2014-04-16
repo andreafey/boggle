@@ -4,7 +4,8 @@ This is a Boggle board solver written in Scala. It was co-authored by [Paul-Jean
 
 ## Notes
 
-We did not implement our own prefix tree (boggle.LetterTree), but the rest of the code is ours.
+We did not originally implement our own PrefixTrie, but I have since added a dependency on the PrefixTrie I developed for my
+[phonebook](https://github.com/andreafey/phonebook) application.
 
 ## Instructions
 

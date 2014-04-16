@@ -1,5 +1,6 @@
 package boggle
 import scala.io.Source
+import phonebook.PrefixTrie
 
 object RunBoggle {
     def main(args: Array[String]) {
@@ -14,10 +15,10 @@ object RunBoggle {
         List('l', 'i', 'n', 'e'),
         List('s', 'e', 'r', 's')) 
         val board = new Board(mygrid)
-        val dict = new LetterTree()
+        val dict = new PrefixTrie[String]()
         println("creating dictionary ...")
         for (line <- Source.fromFile("src/main/resources/dict2.txt").getLines())
-            dict.addWord(line.toLowerCase() + '$')
+            dict.put(line.toLowerCase(), line)
       findAndPrint(board, dict)
       val evilboard = new Board(evilgrid)
 	  findAndPrint(evilboard, dict)
@@ -56,21 +57,21 @@ object RunBoggle {
     /**
      * Find all dictionary words in a Boggle board
      */
-    def findWords(b:Board, dict:LetterTree):List[String] = 
+    def findWords(b:Board, dict:PrefixTrie[String]):List[String] = 
 	  findWordsHelper(b, dict, List(), List(), b.coords)
 
     /**
      * Recursion helper function to findWords
      */
-    private def findWordsHelper(b:Board, dict:LetterTree, found:List[String], usedCoords:List[(Int,Int)], letters:List[(Int, Int)]):List[String] = letters match {
+    private def findWordsHelper(b:Board, dict:PrefixTrie[String], found:List[String], usedCoords:List[(Int,Int)], letters:List[(Int, Int)]):List[String] = letters match {
         case Nil => found
         case l :: ls => {
-            val sub = dict.getSubTree(b.grid(l._1)(l._2))
+            val sub:Option[PrefixTrie[String]] = dict.find(List(b.grid(l._1)(l._2)))
             (sub match {
                 case None => List()
                 case Some(subdict) => {
                     val adj = adjacentCoords(b, l, usedCoords)
-                    subdict.getSubTree('$') match {
+                    subdict.item match {
                         case None => findWordsHelper(b, subdict, List(), usedCoords ++ List(l), adj)
                         case _ => findWordsHelper(b, subdict, List(wordFromGrid(b, usedCoords ++ List(l))), usedCoords ++ List(l), adj)
                     }                        
@@ -100,7 +101,7 @@ object RunBoggle {
    /**
     * Find all words in a dictionary and print them to the console
     */
-   def findAndPrint(board: boggle.Board, dict: boggle.LetterTree): Unit = {
+   def findAndPrint(board: boggle.Board, dict: PrefixTrie[String]): Unit = {
       println("finding words ...")
       val words:List[String] = findWords(board, dict)
 //      println("words found:")
