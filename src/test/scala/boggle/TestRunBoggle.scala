@@ -19,7 +19,7 @@ class TestRunBoggle extends FlatSpec with Matchers with ShouldMatchers {
     val board = new Board(mygrid)
     val dict = new PrefixTrie[String]()
     println("creating dictionary ...")
-    for (line <- Source.fromFile("/Users/andrea/workspace-scala/boggle/src/main/resources/dictionary.txt").getLines())
+    for (line <- Source.fromFile("src/main/resources/dictionary.txt").getLines())
         dict.put(line, line)
     val found = RunBoggle.findWords(board, dict)
     println(dict.item)
