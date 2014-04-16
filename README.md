@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/andreafey/boggle.svg)](https://travis-ci.org/andreafey/boggle)
+
 # Boggle
 
 This is a Boggle board solver written in Scala. It was co-authored by [Paul-Jean](https://github.com/paul-jean) and me during our first week at Hacker School. It can find 1765 words in an evil 4x4 grid!
