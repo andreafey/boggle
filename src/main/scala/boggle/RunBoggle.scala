@@ -34,15 +34,9 @@ object RunBoggle {
    /**
     * Lookup a word in a LetterTree dictionary
     */
-    def lookup(s:String, lt:LetterTree):Boolean = s.toList match {
-        case Nil => lt.getSubTree('$') match { 
-                        case None => false
-                        case _ => true
-                    }
-        case c::cs => lt.getSubTree(c) match {
-                        case None => false
-                        case Some(sub) => lookup(cs.mkString, sub)
-                    }
+    def lookup(s:String, dict:PrefixTrie[String]):Boolean = dict.find(s.toList) match {
+        case None => false
+        case _ => true
     }
 
 /*
