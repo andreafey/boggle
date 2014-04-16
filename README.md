@@ -4,7 +4,8 @@ This is a Boggle board solver written in Scala. It was co-authored by [Paul-Jean
 
 ## Notes
 
-We did not originally implement our own PrefixTrie, but I have since added a dependency on the PrefixTrie I developed for my
+The specific boards to search are hard coded into `boggle.RunBoggle`, but you could write your own runner. We did not originally 
+implement our own PrefixTrie, but I have since added a dependency on the PrefixTrie I developed for my
 [phonebook](https://github.com/andreafey/phonebook) application.
 
 ## Instructions
