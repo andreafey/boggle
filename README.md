@@ -2,7 +2,7 @@
 
 # Boggle
 
-This is a Boggle board solver written in Scala. It was co-authored by [Paul-Jean](https://github.com/paul-jean) and me during our first week at Hacker School. It can find 1765 words in an evil 4x4 grid!
+This is a Boggle board solver written in Scala. [Paul-Jean](https://github.com/paul-jean) and I co-authored it during our first week at Hacker School. It can find 1765 words in an evil 4x4 grid!
 
 ## Notes
 
